@@ -1,7 +1,5 @@
-#pragma once
 #include <stdint.h>
 
-#define eth_size 14
 #define ipv4 0x0800
 
 struct eth_header{
