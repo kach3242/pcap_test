@@ -8,10 +8,10 @@ void pack(const unsigned char* data){
     struct eth_header *eth = (struct eth_header *)data;
     if(ntohs(eth->eth_type) == ipv4){
         struct ip_header *ip = (struct ip_header *)(data + sizeof(*eth));
-        uint8_t ipv4_len = (ip->ipv4_len & 0x0F)<<2;
+        uint16_t ipv4_len = (ip->ipv4_len & 0x0F)<<2;
         if(ip->pid == 6){
             struct tcp_header *tcp = (struct tcp_header *)((uint8_t *)ip + ipv4_len);
-            uint8_t tcp_len = (tcp->hlen & 0xF0)>>2;
+            uint16_t tcp_len = (tcp->hlen & 0xF0)>>2;
             if((ntohs(tcp->sport) == 80 || ntohs(tcp->dport) == 80)){
                 char *http_data = (char *)((uint8_t *)tcp + tcp_len);
                 int p = 0;
@@ -39,7 +39,7 @@ void pack(const unsigned char* data){
                 printf("sport : %d\n", ntohs(tcp->sport));
                 printf("dport : %d\n", ntohs(tcp->dport));
                 printf("tcp_len : %d\n", tcp_len);
-                uint16_t http_data_len = ntohs(ip->packet_len) - (uint16_t)(ipv4_len + tcp_len);
+                uint16_t http_data_len = ntohs(ip->packet_len) - ipv4_len + tcp_len;
                 printf("http_data_len : %d\n", http_data_len);
                 if(http_data_len > 16){
                     for (int i=0; i<16; i++) {
@@ -49,7 +49,6 @@ void pack(const unsigned char* data){
                 else if(http_data_len > 0) {
                     printf("%s", http_data);
                 }
-                http_data[0] = '\0';
                 printf("\n\n");
             }
         }
