@@ -39,7 +39,7 @@ void pack(const unsigned char* data){
                 printf("sport : %d\n", ntohs(tcp->sport));
                 printf("dport : %d\n", ntohs(tcp->dport));
                 printf("tcp_len : %d\n", tcp_len);
-                uint16_t http_data_len = ntohs(ip->packet_len) - ipv4_len + tcp_len;
+                uint16_t http_data_len = ntohs(ip->packet_len) - ipv4_len - tcp_len;
                 printf("http_data_len : %d\n", http_data_len);
                 if(http_data_len > 16){
                     for (int i=0; i<16; i++) {
